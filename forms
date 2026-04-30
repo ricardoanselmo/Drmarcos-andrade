@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeadFlow — CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F3EE;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE6;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.14);
+  --text: #1A1916;
+  --muted: #7A7770;
+  --accent: #3D2FBF;
+  --accent-bg: #EDEAFF;
+  --accent-mid: #7B6EE8;
+  --success: #1A6B45;
+  --success-bg: #D6F0E3;
+  --warn: #8A5A00;
+  --warn-bg: #FFF0CC;
+  --danger: #8B2020;
+  --danger-bg: #FFE5E5;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 16px rgba(0,0,0,0.07);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── LAYOUT ── */
+.app { display: flex; flex-direction: column; height: 100vh; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 56px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.nav-tab {
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+
+.nav-tab.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notif-pill {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+.notif-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: blink 1.2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+.avatar-sm {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+}
+
+.main { flex: 1; overflow: hidden; }
+.panel { display: none; height: 100%; }
+.panel.active { display: flex; }
+
+/* ── FORM VIEW ── */
+#view-form {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+  gap: 20px;
+}
+
+.form-wrapper {
+  width: 100%; max-width: 480px;
+}
+
+.form-card {
+  background: var(--surface);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.form-banner {
+  background: var(--accent);
+  padding: 28px 32px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.form-banner::before {
+  content: '';
+  position: absolute;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  top: -60px; right: -60px;
+}
+
+.form-banner h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.form-banner p {
+  color: rgba(255,255,255,0.75);
+  font-size: 13px;
+}
+
+.form-body { padding: 28px 32px; }
+
+.field { margin-bottom: 16px; }
+
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+  appearance: none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(61,47,191,0.12);
+}
+
+.field textarea { resize: vertical; min-height: 88px; }
+
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.btn-submit {
+  width: 100%;
+  padding: 13px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s;
+  margin-top: 8px;
+}
+
+.btn-submit:hover { background: #2E22A0; transform: translateY(-1px); }
+.btn-submit:active { transform: translateY(0); }
+
+.form-footer {
+  padding: 14px 32px;
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.form-footer svg { opacity: 0.5; }
+
+/* success state */
+.success-state {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 48px 32px;
+  gap: 12px;
+}
+.success-icon {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--success-bg);
+  color: var(--success);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.success-state h2 { font-family: 'Syne', sans-serif; font-size: 20px; }
+.success-state p { color: var(--muted); font-size: 13px; }
+
+/* ── EDITOR VIEW ── */
+#view-editor {
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 32px 40px;
+  gap: 24px;
+}
+
+.editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.editor-section {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+
+.editor-section h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.chip-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border: 1.5px solid var(--border2);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--muted);
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.chip.on {
+  background: var(--accent-bg);
+  border-color: var(--accent-mid);
+  color: var(--accent);
+}
+
+.color-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.swatch {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.15s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.swatch.active { border-color: var(--text); transform: scale(1.12); }
+
+.col-rows { display: flex; flex-direction: column; gap: 8px; }
+
+.col-row {
+  display: flex; align-items: center; gap: 8px;
+}
+
+.col-row input {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+}
+.col-row input:focus { border-color: var(--accent); }
+
+.col-del {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--muted);
+  flex-shrink: 0;
+  transition: background 0.1s;
+}
+.col-del:hover { background: var(--danger-bg); color: var(--danger); }
+
+.btn-add {
+  margin-top: 8px;
+  padding: 7px 14px;
+  border: 1.5px dashed var(--border2);
+  border-radius: var(--radius-sm);
+  background: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-add:hover { border-color: var(--accent-mid); color: var(--accent); }
+
+.editor-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+}
+.editor-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(61,47,191,0.12); }
+
+/* ── KANBAN VIEW ── */
+#view-kanban {
+  flex-direction: column;
+  overflow: hidden;
+  padding: 24px 28px;
+  gap: 20px;
+}
+
+.kanban-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.kanban-top h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.stats-row {
+  display: flex;
+  gap: 10px;
+}
+
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  text-align: center;
+}
+
+.stat-n {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.stat-l { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+.board {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  flex: 1;
+  padding-bottom: 8px;
+}
+
+.col {
+  flex: 0 0 260px;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 14px;
+  border: 1px solid var(--border);
+}
+
+.col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.col-name {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.col-badge {
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--surface);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.cards {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+  padding: 4px;
+}
+
+.cards.over { background: rgba(61,47,191,0.06); }
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  cursor: grab;
+  transition: box-shadow 0.15s, transform 0.15s;
+  user-select: none;
+}
+
+.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-1px); }
+.card:active { cursor: grabbing; opacity: 0.85; }
+
+.card-top {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;
+}
+
+.card-name-text { font-size: 13px; font-weight: 600; }
+
+.card-time { font-size: 10px; color: var(--muted); }
+
+.card-detail { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+
+.card-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.chip-sm {
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.chip-new { background: var(--accent-bg); color: var(--accent); }
+.chip-hot { background: #FFE8E0; color: #C03A0A; }
+.chip-warm { background: var(--warn-bg); color: var(--warn); }
+.chip-cold { background: #E6F1FB; color: #185FA5; }
+.chip-won { background: var(--success-bg); color: var(--success); }
+
+.mini-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="logo">LeadFlow</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('form')">Formulário</button>
+      <button class="nav-tab" onclick="switchTab('editor')">Personalizar</button>
+      <button class="nav-tab" onclick="switchTab('kanban')">Kanban</button>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-pill" id="notif-pill">
+        <div class="notif-dot"></div>
+        <span id="notif-text">Novo lead!</span>
+      </div>
+      <div class="avatar-sm">VC</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- FORM -->
+    <div class="panel active" id="view-form">
+      <div class="form-wrapper">
+        <div class="form-card">
+          <div class="form-banner">
+            <h1 id="form-title">Tenho interesse!</h1>
+            <p id="form-sub">Preencha e nossa equipe entra em contato rapidinho.</p>
+          </div>
+
+          <div id="form-body-wrap">
+            <div class="form-body" id="form-body">
+              <div class="row-2">
+                <div class="field" id="f-nome"><label>Nome completo</label><input type="text" placeholder="Seu nome completo"></div>
+                <div class="field" id="f-empresa" style="display:none"><label>Empresa</label><input type="text" placeholder="Nome da empresa"></div>
+              </div>
+              <div class="row-2">
+                <div class="field" id="f-whatsapp"><label>WhatsApp</label><input type="text" placeholder="+55 (11) 9 0000-0000"></div>
+                <div class="field" id="f-email"><label>Email</label><input type="email" placeholder="voce@email.com"></div>
+              </div>
+              <div class="row-2">
+                <div class="field" id="f-orcamento"><label>Orçamento</label>
+                  <select>
+                    <option value="">Selecionar...</option>
+                    <option>Até R$ 1.000</option>
+                    <option>R$ 1.000 – R$ 5.000</option>
+                    <option>Acima de R$ 5.000</option>
+                  </select>
+                </div>
+                <div class="field" id="f-cidade" style="display:none"><label>Cidade</label><input type="text" placeholder="Sua cidade"></div>
+                <div class="field" id="f-produto" style="display:none"><label>Produto</label><input type="text" placeholder="Produto de interesse"></div>
+              </div>
+              <div class="field" id="f-mensagem"><label>Como podemos ajudar?</label><textarea placeholder="Descreva brevemente sua necessidade..."></textarea></div>
+              <button class="btn-submit" onclick="submitForm()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                Enviar mensagem
+              </button>
+            </div>
+            <!-- success -->
+            <div class="success-state" id="success-state">
+              <div class="success-icon">✓</div>
+              <h2>Mensagem enviada!</h2>
+              <p>Nossa equipe foi notificada e entrará em contato em breve.</p>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Seus dados estão seguros e não serão compartilhados.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDITOR -->
+    <div class="panel" id="view-editor">
+      <div class="editor-grid" style="width:100%;max-width:860px;margin:0 auto">
+        <!-- campos -->
+        <div class="editor-section">
+          <h3>Campos do formulário</h3>
+          <div class="chip-grid" id="field-chips">
+            <div class="chip on" data-field="f-nome">✓ Nome</div>
+            <div class="chip on" data-field="f-whatsapp">✓ WhatsApp</div>
+            <div class="chip on" data-field="f-email">✓ Email</div>
+            <div class="chip on" data-field="f-orcamento">✓ Orçamento</div>
+            <div class="chip on" data-field="f-mensagem">✓ Mensagem</div>
+            <div class="chip" data-field="f-empresa">+ Empresa</div>
+            <div class="chip" data-field="f-cidade">+ Cidade</div>
+            <div class="chip" data-field="f-produto">+ Produto</div>
+          </div>
+        </div>
+        <!-- textos -->
+        <div class="editor-section">
+          <h3>Textos</h3>
+          <div class="field">
+            <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);display:block;margin-bottom:6px">Título</label>
+            <input class="editor-input" type="text" value="Tenho interesse!" oninput="document.getElementById('form-title').textContent=this.value">
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);display:block;margin-bottom:6px">Subtítulo</label>
+            <input class="editor-input" type="text" value="Preencha e nossa equipe entra em contato rapidinho." oninput="document.getElementById('form-sub').textContent=this.value">
+          </div>
+        </div>
+        <!-- cor -->
+        <div class="editor-section">
+          <h3>Cor principal</h3>
+          <div class="color-grid">
+            <div class="swatch active" style="background:#3D2FBF" onclick="setAccent('#3D2FBF','#EDEAFF','#7B6EE8',this)"></div>
+            <div class="swatch" style="background:#0F6E56" onclick="setAccent('#0F6E56','#D6F0E3','#1D9E75',this)"></div>
+            <div class="swatch" style="background:#C03A0A" onclick="setAccent('#C03A0A','#FFE8E0','#E87040',this)"></div>
+            <div class="swatch" style="background:#185FA5" onclick="setAccent('#185FA5','#E6F1FB','#378ADD',this)"></div>
+            <div class="swatch" style="background:#7B2D8B" onclick="setAccent('#7B2D8B','#F5E6FF','#B97BC8',this)"></div>
+            <div class="swatch" style="background:#8B6000" onclick="setAccent('#8B6000','#FFF0CC','#E0A010',this)"></div>
+            <div class="swatch" style="background:#1A1916" onclick="setAccent('#1A1916','#F0EDE6','#888780',this)"></div>
+          </div>
+        </div>
+        <!-- colunas kanban -->
+        <div class="editor-section">
+          <h3>Colunas do Kanban</h3>
+          <div class="col-rows" id="col-editor">
+            <div class="col-row"><input type="text" value="Novo lead" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div></div>
+            <div class="col-row"><input type="text" value="Em contato" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div></div>
+            <div class="col-row"><input type="text" value="Proposta enviada" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div></div>
+            <div class="col-row"><input type="text" value="Fechado" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div></div>
+          </div>
+          <button class="btn-add" onclick="addColRow()">+ nova coluna</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KANBAN -->
+    <div class="panel" id="view-kanban">
+      <div class="kanban-top">
+        <h2>Pipeline de vendas</h2>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-n" id="stat-total">3</div><div class="stat-l">Leads</div></div>
+          <div class="stat"><div class="stat-n" id="stat-hoje">1</div><div class="stat-l">Hoje</div></div>
+        </div>
+      </div>
+      <div class="board" id="board">
+        <!-- colunas geradas por JS -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+const state = {
+  accent: '#3D2FBF',
+  accentBg: '#EDEAFF',
+  accentMid: '#7B6EE8',
+  cols: ['Novo lead','Em contato','Proposta enviada','Fechado'],
+  cards: {
+    'Novo lead': [
+      { id:'c1', name:'Ana Lima', detail:'WhatsApp · R$1–5k', tag:'hot', time:'há 5 min' },
+      { id:'c2', name:'Bruno Souza', detail:'Email · Até R$1k', tag:'warm', time:'há 2h' }
+    ],
+    'Em contato': [
+      { id:'c3', name:'Carla Mendes', detail:'WhatsApp · Acima R$5k', tag:'hot', time:'ontem' }
+    ],
+    'Proposta enviada': [],
+    'Fechado': []
+  },
+  drag: null
+};
+
+let leadCount = 3;
+
+// ── TABS ──
+function switchTab(t) {
+  document.querySelectorAll('.nav-tab').forEach((b,i) => b.classList.toggle('active', ['form','editor','kanban'][i]===t));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('view-'+t).classList.add('active');
+  if(t==='kanban') renderBoard();
+}
+
+// ── ACCENT ──
+function setAccent(c, bg, mid, el) {
+  state.accent=c; state.accentBg=bg; state.accentMid=mid;
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  applyAccent();
+}
+
+function applyAccent() {
+  document.querySelector(':root').style.setProperty('--accent', state.accent);
+  document.querySelector(':root').style.setProperty('--accent-bg', state.accentBg);
+  document.querySelector(':root').style.setProperty('--accent-mid', state.accentMid);
+}
+
+// ── FIELD CHIPS ──
+document.getElementById('field-chips').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if(!chip) return;
+  const field = document.getElementById(chip.dataset.field);
+  if(!field) return;
+  const on = chip.classList.toggle('on');
+  chip.textContent = (on ? '✓ ' : '+ ') + chip.textContent.replace(/^[✓+] /,'');
+  field.style.display = on ? '' : 'none';
+});
+
+// ── COL EDITOR ──
+function addColRow() {
+  const d = document.createElement('div');
+  d.className='col-row';
+  d.innerHTML=`<input type="text" placeholder="Nova coluna" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div>`;
+  document.getElementById('col-editor').appendChild(d);
+  syncCols();
+}
+
+function removeColRow(el) {
+  el.parentElement.remove();
+  syncCols();
+}
+
+function syncCols() {
+  const inputs = document.querySelectorAll('#col-editor input');
+  const newCols = Array.from(inputs).map(i=>i.value.trim()).filter(Boolean);
+  // migrate cards
+  const newCards = {};
+  newCols.forEach(c => { newCards[c] = state.cards[c] || []; });
+  state.cols = newCols;
+  state.cards = newCards;
+}
+
+// ── FORM SUBMIT ──
+function submitForm() {
+  document.getElementById('form-body').style.display='none';
+  document.getElementById('success-state').style.display='flex';
+
+  const names=['Maria Costa','João Pedro','Fernanda Reis','Rafael Nunes','Camila Torres','Lucas Oliveira'];
+  const orcamentos=['Até R$1k','R$1–5k','Acima R$5k'];
+  leadCount++;
+  const name = names[leadCount % names.length];
+  const orc = orcamentos[leadCount % 3];
+  const id = 'c_'+Date.now();
+
+  syncCols();
+  const col0 = state.cols[0];
+  if(col0) {
+    if(!state.cards[col0]) state.cards[col0]=[];
+    state.cards[col0].unshift({ id, name, detail:`WhatsApp · ${orc}`, tag:'new', time:'agora' });
+  }
+
+  // notif
+  document.getElementById('notif-text').textContent = `Novo lead: ${name}`;
+  const pill = document.getElementById('notif-pill');
+  pill.style.display='flex';
+  setTimeout(()=>pill.style.display='none', 5000);
+
+  updateStats();
+}
+
+// ── KANBAN ──
+const tagMap = {
+  new: ['chip-new','novo'],
+  hot: ['chip-hot','quente'],
+  warm: ['chip-warm','morno'],
+  cold: ['chip-cold','frio'],
+  won: ['chip-won','fechado']
+};
+
+function initials(name) {
+  return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+}
+
+const avatarColors = ['#EDEAFF','#D6F0E3','#FFE8E0','#E6F1FB','#F5E6FF','#FFF0CC'];
+const avatarText = ['#3D2FBF','#0F6E56','#C03A0A','#185FA5','#7B2D8B','#8B6000'];
+
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML='';
+  syncCols();
+
+  state.cols.forEach((colName, ci) => {
+    const cards = state.cards[colName] || [];
+    const col = document.createElement('div');
+    col.className='col';
+    col.innerHTML=`
+      <div class="col-head">
+        <span class="col-name" style="color:var(--accent)">${colName}</span>
+        <span class="col-badge" id="badge-${ci}">${cards.length}</span>
+      </div>
+      <div class="cards" id="cards-${ci}" ondragover="onOver(event,this)" ondrop="onDrop(event,'${colName}')" ondragleave="onLeave(event,this)"></div>`;
+    board.appendChild(col);
+
+    const container = col.querySelector('.cards');
+    cards.forEach(card => container.appendChild(makeCard(card, ci)));
+  });
+
+  updateStats();
+}
+
+function makeCard(card, ci) {
+  const [cls, label] = tagMap[card.tag] || ['chip-new','novo'];
+  const av = document.createElement('div');
+  const idx = card.id.charCodeAt(0) % avatarColors.length;
+  av.className='mini-av';
+  av.style.background=avatarColors[idx];
+  av.style.color=avatarText[idx];
+  av.textContent=initials(card.name);
+
+  const el = document.createElement('div');
+  el.className='card';
+  el.id=card.id;
+  el.draggable=true;
+  el.innerHTML=`
+    <div class="card-top">
+      <span class="card-name-text">${card.name}</span>
+      <span class="card-time">${card.time}</span>
+    </div>
+    <div class="card-detail">${card.detail}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="card-chips"><span class="chip-sm ${cls}">${label}</span></div>
+    </div>`;
+  el.querySelector('.card-chips').parentElement.appendChild(av);
+  el.addEventListener('dragstart', e => { state.drag={card, fromCol: state.cols[ci]}; el.style.opacity='0.5'; });
+  el.addEventListener('dragend', () => el.style.opacity='1');
+  return el;
+}
+
+function onOver(e, el) { e.preventDefault(); el.classList.add('over'); }
+function onLeave(e, el) { el.classList.remove('over'); }
+
+function onDrop(e, toColName) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  if(!state.drag) return;
+  const { card, fromCol } = state.drag;
+  if(fromCol===toColName) return;
+  state.cards[fromCol] = state.cards[fromCol].filter(c=>c.id!==card.id);
+  if(!state.cards[toColName]) state.cards[toColName]=[];
+  state.cards[toColName].push(card);
+  state.drag=null;
+  renderBoard();
+}
+
+function updateStats() {
+  let total = 0;
+  state.cols.forEach(c => total += (state.cards[c]||[]).length);
+  document.getElementById('stat-total').textContent = total;
+  const today = (state.cards[state.cols[0]]||[]).filter(c=>c.time==='agora'||c.time.includes('min')).length;
+  document.getElementById('stat-hoje').textContent = today || 1;
+}
+
+// ── INIT ──
+renderBoard();
+</script>
+</body>
+</html>
