@@ -1,3 +1,4 @@
+[index-drmarcos2026.html](https://github.com/user-attachments/files/27267599/index-drmarcos2026.html)
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -757,7 +758,7 @@ const SCRIPT_URL = 'COLE_AQUI_A_URL_DO_APPS_SCRIPT';
 
 // 2) Senha — tem que ser EXATAMENTE igual ao SECRET_KEY do Apps Script.
 //    Também é usada pra entrar no painel.
-const SECRET_KEY = 'TROQUE-POR-UMA-SENHA-FORTE-AQUI';
+const SECRET_KEY = 'drmarcos2026';
 
 // ═══════════════════════════════════════════════════════════════
 
