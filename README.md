@@ -11,7 +11,7 @@
      Instruções: Ads Manager → Events Manager → Pixel → copie o ID
      ══════════════════════════════════════════════════════════════ -->
 <script>
-  const META_PIXEL_ID = 'SEU_PIXEL_ID_AQUI'; // ← troque pelo seu ID
+  const META_PIXEL_ID = '1481871323442318'; // ← troque pelo seu ID
 
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
   n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
