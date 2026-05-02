@@ -272,6 +272,7 @@ body {
 // 🔧 CONFIGURAÇÃO — troque apenas os dois valores abaixo
 // ═══════════════════════════════════════════════════════════════
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZ42bJ5OSIx0UI1VDm-iK2VTO2nBsEhyBqjsx9BCL4Kwg6IF4H7BEymF8ShA76jzxA1Q/exec';
+const SPREADSHEET_ID = '1jLbnYSee2ANJ1uo4ArTVvblQ1RQPW0odwIGSVu8wZB4';
 const SECRET_KEY = 'drmarcos2026';
 // ═══════════════════════════════════════════════════════════════
 
