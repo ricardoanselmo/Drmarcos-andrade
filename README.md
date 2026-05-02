@@ -271,8 +271,8 @@ body {
 // ═══════════════════════════════════════════════════════════════
 // 🔧 CONFIGURAÇÃO — troque apenas os dois valores abaixo
 // ═══════════════════════════════════════════════════════════════
-const SCRIPT_URL = 'COLE_AQUI_A_URL_DO_APPS_SCRIPT';
-const SECRET_KEY = 'Rico123';
+const SCRIPT_URL = '[drmarcos2026](https://script.google.com/macros/s/AKfycbxZ42bJ5OSIx0Ul1VDm-iK2VTO2nBsEhyBqjsx9BCL4Kwg6IF4H7BEymF8ShA76jzxA1Q/exec)';
+const SECRET_KEY = 'drmarcos2026';
 // ═══════════════════════════════════════════════════════════════
 
 function trackWppClick() {
