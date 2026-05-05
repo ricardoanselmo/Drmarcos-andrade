@@ -421,17 +421,17 @@ async function loadFromSheet(force){
 
     state.cols.forEach(c=>state.cards[c]=[]);
     state.leadsRaw.forEach(lead => {
-      const status=lead.status || state.cols[0];
+      const status = String(lead.status || state.cols[0] || 'Novo lead');
       if(!state.cards[status]) state.cards[status]=[];
       state.cards[status].push({
-        id:lead.id || ('c_'+Math.random()),
-        name:lead.nome || '(sem nome)',
-        detail:[lead.servico||'', lead.whatsapp||lead.email||''].filter(Boolean).join(' · '),
-        whatsapp:lead.whatsapp||'',
-        email:lead.email||'',
-        tag:lead.tag||'new',
-        time:formatTime(lead.criado_em),
-        raw:lead
+        id: String(lead.id || ('c_'+Math.random())),
+        name: String(lead.nome || '(sem nome)'),
+        detail: [String(lead.servico||''), String(lead.whatsapp||lead.email||'')].filter(Boolean).join(' · '),
+        whatsapp: String(lead.whatsapp || ''),
+        email: String(lead.email || ''),
+        tag: String(lead.tag || 'new'),
+        time: formatTime(lead.criado_em),
+        raw: lead
       });
     });
   }catch(err){console.error(err); if(force) alert('Erro: '+err.message)}
@@ -468,7 +468,7 @@ const tagMap={new:['chip-new','novo'],hot:['chip-hot','quente'],warm:['chip-warm
 const avatarColors=['#EDEAFF','#D6F0E3','#FFE8E0','#E6F1FB','#F5E6FF','#FFF0CC'];
 const avatarText=['#3D2FBF','#0F6E56','#C03A0A','#185FA5','#7B2D8B','#8B6000'];
 
-function initials(n){return (n||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
+function initials(n){return String(n||'?').split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)}
 
 function renderBoard(){
   const board=document.getElementById('board');
@@ -495,12 +495,12 @@ function renderBoard(){
 function makeCard(card,ci){
   const [cls,label]=tagMap[card.tag]||['chip-new','novo'];
   const av=document.createElement('div');
-  const idx=(card.id||'').charCodeAt(0)%avatarColors.length||0;
+  const idx=String(card.id||'').charCodeAt(0)%avatarColors.length||0;
   av.className='mini-av';
   av.style.background=avatarColors[idx]; av.style.color=avatarText[idx];
   av.textContent=initials(card.name);
 
-  const wppNumber=(card.whatsapp||'').replace(/\D/g,'');
+  const wppNumber=String(card.whatsapp||'').replace(/\D/g,'');
   const wppBtn=wppNumber?`<a href="https://wa.me/${wppNumber.startsWith('55')?wppNumber:'55'+wppNumber}" target="_blank" rel="noopener" class="wpp-btn" title="Abrir WhatsApp" onclick="event.stopPropagation()">💬</a>`:'';
 
   const el=document.createElement('div');
