@@ -473,8 +473,8 @@ function initials(n){return (n||'?').split(' ').map(w=>w[0]).join('').toUpperCas
 function renderBoard(){
   const board=document.getElementById('board');
   board.innerHTML='';
-  // Não chama syncCols aqui — usa state.cols direto pra evitar bug de DOM dessincronizado
   if(!state.cols || state.cols.length===0) state.cols=[...DEFAULT_COLS];
+  console.log('[CRM] renderBoard com colunas:', state.cols, 'cards:', state.cards);
   state.cols.forEach((colName,ci) => {
     const cards=state.cards[colName]||[];
     const col=document.createElement('div');
