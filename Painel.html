@@ -7,121 +7,135 @@
 <meta name="robots" content="noindex,nofollow">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #F5F3EE;
-  --surface: #FFFFFF;
-  --surface2: #F0EDE6;
-  --border: rgba(0,0,0,0.08);
-  --border2: rgba(0,0,0,0.14);
-  --text: #1A1916;
-  --muted: #7A7770;
-  --accent: #3D2FBF;
-  --accent-bg: #EDEAFF;
-  --accent-mid: #7B6EE8;
-  --success: #1A6B45;
-  --success-bg: #D6F0E3;
-  --warn: #8A5A00;
-  --warn-bg: #FFF0CC;
-  --danger: #8B2020;
-  --danger-bg: #FFE5E5;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 2px 16px rgba(0,0,0,0.07);
-}
+:root{--bg:#F5F3EE;--surface:#FFFFFF;--surface2:#F0EDE6;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--text:#1A1916;--muted:#7A7770;--accent:#3D2FBF;--accent-bg:#EDEAFF;--accent-mid:#7B6EE8;--success:#1A6B45;--success-bg:#D6F0E3;--warn:#8A5A00;--warn-bg:#FFF0CC;--danger:#8B2020;--danger-bg:#FFE5E5;--radius:12px;--radius-sm:8px;--shadow:0 2px 16px rgba(0,0,0,0.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+.app{display:flex;flex-direction:column;height:100vh}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.logo{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.03em;color:var(--accent)}
+.nav-tabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:var(--radius-sm)}
+.nav-tab{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:inherit}
+.nav-tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.1)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.btn-logout{background:none;border:1px solid var(--border);padding:6px 10px;border-radius:6px;font-size:11px;color:var(--muted);cursor:pointer;font-family:inherit}
+.btn-logout:hover{color:var(--danger);border-color:var(--danger)}
+.main{flex:1;overflow:hidden}
+.panel{display:none;height:100%}
+.panel.active{display:flex}
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+#view-kanban{flex-direction:column;overflow:hidden;padding:24px 28px;gap:20px}
+.kanban-top{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.kanban-top h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700}
+.stats-row{display:flex;gap:10px;align-items:center}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 16px;text-align:center}
+.stat-n{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--accent)}
+.stat-l{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted)}
+.btn-reload{padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:500;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn-reload:hover{border-color:var(--accent-mid);color:var(--accent)}
+.btn-reload:disabled{opacity:0.5;cursor:wait}
 
-.app { display: flex; flex-direction: column; height: 100vh; }
+.board{display:flex;gap:14px;overflow-x:auto;flex:1;padding-bottom:8px}
+.col{flex:0 0 260px;display:flex;flex-direction:column;background:var(--surface2);border-radius:var(--radius);padding:14px;border:1px solid var(--border)}
+.col-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-shrink:0}
+.col-name{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+.col-badge{padding:2px 8px;border-radius:20px;background:var(--surface);font-size:11px;font-weight:600;color:var(--muted);border:1px solid var(--border)}
+.cards{flex:1;overflow-y:auto;min-height:80px;display:flex;flex-direction:column;gap:8px;border-radius:var(--radius-sm);transition:background 0.15s;padding:4px}
+.cards.over{background:rgba(61,47,191,0.06)}
+.card{background:var(--surface);border-radius:var(--radius-sm);padding:12px 14px;border:1.5px solid var(--border);cursor:pointer;transition:box-shadow 0.15s,transform 0.15s;user-select:none}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.1);transform:translateY(-1px);border-color:var(--accent-mid)}
+.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.card-name-text{font-size:13px;font-weight:600}
+.card-time{font-size:10px;color:var(--muted)}
+.card-detail{font-size:11px;color:var(--muted);margin-bottom:8px}
+.card-chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip-sm{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.chip-new{background:var(--accent-bg);color:var(--accent)}
+.chip-hot{background:#FFE8E0;color:#C03A0A}
+.chip-warm{background:var(--warn-bg);color:var(--warn)}
+.chip-cold{background:#E6F1FB;color:#185FA5}
+.chip-won{background:var(--success-bg);color:var(--success)}
+.wpp-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#25D366;color:#fff;font-size:14px;text-decoration:none}
+.wpp-btn:hover{transform:scale(1.1);box-shadow:0 2px 8px rgba(37,211,102,0.4)}
+.mini-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
 
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 56px; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-.logo { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.03em; color: var(--accent); }
-.nav-tabs { display: flex; gap: 4px; background: var(--bg); padding: 4px; border-radius: var(--radius-sm); }
-.nav-tab { padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all 0.15s; }
-.nav-tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-.topbar-right { display: flex; align-items: center; gap: 10px; }
-.avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
-.btn-logout { background: none; border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; font-size: 11px; color: var(--muted); cursor: pointer; font-family: inherit; }
-.btn-logout:hover { color: var(--danger); border-color: var(--danger); }
+#view-editor{flex-direction:column;overflow-y:auto;padding:32px 40px;gap:24px}
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%;max-width:920px;margin:0 auto}
+.editor-section{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:24px}
+.editor-section h3{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.color-grid{display:flex;gap:10px;flex-wrap:wrap}
+.swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.15s;box-shadow:0 1px 4px rgba(0,0,0,0.15)}
+.swatch.active{border-color:var(--text);transform:scale(1.12)}
+.col-rows{display:flex;flex-direction:column;gap:8px}
+.col-row{display:flex;align-items:center;gap:8px}
+.col-row input{flex:1;padding:7px 10px;border:1.5px solid var(--border2);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;outline:none;background:var(--surface)}
+.col-row input:focus{border-color:var(--accent)}
+.col-del{width:24px;height:24px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted)}
+.col-del:hover{background:var(--danger-bg);color:var(--danger)}
+.btn-add{margin-top:8px;padding:7px 14px;border:1.5px dashed var(--border2);border-radius:var(--radius-sm);background:none;font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit}
+.btn-add:hover{border-color:var(--accent-mid);color:var(--accent)}
+.btn-save{margin-top:12px;padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-save:hover{background:#2E22A0}
+.btn-save:disabled{opacity:0.6;cursor:wait}
 
-.main { flex: 1; overflow: hidden; }
-.panel { display: none; height: 100%; }
-.panel.active { display: flex; }
-
-#view-kanban { flex-direction: column; overflow: hidden; padding: 24px 28px; gap: 20px; }
-.kanban-top { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.kanban-top h2 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
-.stats-row { display: flex; gap: 10px; align-items: center; }
-.stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 16px; text-align: center; }
-.stat-n { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); }
-.stat-l { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
-.btn-reload { padding: 8px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 6px; }
-.btn-reload:hover { border-color: var(--accent-mid); color: var(--accent); }
-.btn-reload:disabled { opacity: 0.5; cursor: wait; }
-
-.board { display: flex; gap: 14px; overflow-x: auto; flex: 1; padding-bottom: 8px; }
-.col { flex: 0 0 260px; display: flex; flex-direction: column; background: var(--surface2); border-radius: var(--radius); padding: 14px; border: 1px solid var(--border); }
-.col-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-shrink: 0; }
-.col-name { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
-.col-badge { padding: 2px 8px; border-radius: 20px; background: var(--surface); font-size: 11px; font-weight: 600; color: var(--muted); border: 1px solid var(--border); }
-.cards { flex: 1; overflow-y: auto; min-height: 80px; display: flex; flex-direction: column; gap: 8px; border-radius: var(--radius-sm); transition: background 0.15s; padding: 4px; }
-.cards.over { background: rgba(61,47,191,0.06); }
-
-.card { background: var(--surface); border-radius: var(--radius-sm); padding: 12px 14px; border: 1.5px solid var(--border); cursor: grab; transition: box-shadow 0.15s, transform 0.15s; user-select: none; }
-.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-1px); }
-.card:active { cursor: grabbing; opacity: 0.85; }
-.card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-.card-name-text { font-size: 13px; font-weight: 600; }
-.card-time { font-size: 10px; color: var(--muted); }
-.card-detail { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
-.card-chips { display: flex; gap: 4px; flex-wrap: wrap; }
-.chip-sm { padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; }
-.chip-new { background: var(--accent-bg); color: var(--accent); }
-.chip-hot { background: #FFE8E0; color: #C03A0A; }
-.chip-warm { background: var(--warn-bg); color: var(--warn); }
-.chip-cold { background: #E6F1FB; color: #185FA5; }
-.chip-won { background: var(--success-bg); color: var(--success); }
-.wpp-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #25D366; color: #fff; font-size: 14px; text-decoration: none; transition: transform 0.1s, box-shadow 0.1s; }
-.wpp-btn:hover { transform: scale(1.1); box-shadow: 0 2px 8px rgba(37,211,102,0.4); }
-.mini-av { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
-
-#view-editor { flex-direction: column; overflow-y: auto; padding: 32px 40px; gap: 24px; }
-.editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; max-width: 860px; margin: 0 auto; }
-.editor-section { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 24px; }
-.editor-section h3 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
-.color-grid { display: flex; gap: 10px; flex-wrap: wrap; }
-.swatch { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: all 0.15s; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
-.swatch.active { border-color: var(--text); transform: scale(1.12); }
-.col-rows { display: flex; flex-direction: column; gap: 8px; }
-.col-row { display: flex; align-items: center; gap: 8px; }
-.col-row input { flex: 1; padding: 7px 10px; border: 1.5px solid var(--border2); border-radius: var(--radius-sm); font-family: inherit; font-size: 13px; outline: none; background: var(--surface); }
-.col-row input:focus { border-color: var(--accent); }
-.col-del { width: 24px; height: 24px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--muted); }
-.col-del:hover { background: var(--danger-bg); color: var(--danger); }
-.btn-add { margin-top: 8px; padding: 7px 14px; border: 1.5px dashed var(--border2); border-radius: var(--radius-sm); background: none; font-size: 12px; color: var(--muted); cursor: pointer; font-family: inherit; }
-.btn-add:hover { border-color: var(--accent-mid); color: var(--accent); }
-.url-info { font-size: 12px; color: var(--muted); padding: 12px; background: var(--surface2); border-radius: var(--radius-sm); word-break: break-all; }
-.url-info strong { color: var(--text); }
-.url-info code { font-family: 'SF Mono', Monaco, monospace; font-size: 11px; }
+/* Field editor */
+.field-row{background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;display:flex;flex-direction:column;gap:8px}
+.field-row .row-1{display:flex;gap:8px;align-items:center}
+.field-row input,.field-row select{flex:1;padding:7px 10px;border:1.5px solid var(--border2);border-radius:6px;font-family:inherit;font-size:12px;outline:none;background:var(--surface)}
+.field-row input:focus,.field-row select:focus{border-color:var(--accent)}
+.field-row .field-key{flex:0 0 110px}
+.field-row .field-tipo{flex:0 0 100px}
+.field-row .field-opcoes{font-size:12px}
+.field-row textarea{padding:7px 10px;border:1.5px solid var(--border2);border-radius:6px;font-family:inherit;font-size:12px;outline:none;background:var(--surface);resize:vertical;min-height:36px}
+.field-meta{font-size:10px;color:var(--muted);display:flex;gap:14px;align-items:center}
+.field-meta label{display:flex;align-items:center;gap:4px;cursor:pointer}
+.save-status{font-size:11px;color:var(--success);margin-left:8px;opacity:0;transition:opacity 0.2s}
+.save-status.show{opacity:1}
 
 /* Login */
-.login-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
-.login-card { background: var(--surface); padding: 36px 32px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); max-width: 360px; width: 100%; }
-.login-card h2 { font-family: 'Syne', sans-serif; margin-bottom: 6px; font-size: 22px; }
-.login-card p { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
-.login-card input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border2); border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; outline: none; margin-bottom: 12px; }
-.login-card input:focus { border-color: var(--accent); }
-.login-err { color: var(--danger); font-size: 12px; margin-bottom: 8px; min-height: 16px; }
-.login-btn { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
-.login-btn:hover { background: #2E22A0; }
+.login-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.login-card{background:var(--surface);padding:36px 32px;border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);max-width:360px;width:100%}
+.login-card h2{font-family:'Syne',sans-serif;margin-bottom:6px;font-size:22px}
+.login-card p{font-size:13px;color:var(--muted);margin-bottom:18px}
+.login-card input{width:100%;padding:11px 14px;border:1.5px solid var(--border2);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;outline:none;margin-bottom:12px}
+.login-card input:focus{border-color:var(--accent)}
+.login-err{color:var(--danger);font-size:12px;margin-bottom:8px;min-height:16px}
+.login-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.login-btn:hover{background:#2E22A0}
 
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+/* Modal de detalhes */
+.modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:flex-start;justify-content:center;z-index:9000;padding:40px 16px;overflow-y:auto}
+.modal-back.show{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius);max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;animation:pop 0.2s}
+@keyframes pop{from{transform:scale(0.96);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-head{padding:22px 24px 16px;background:var(--accent);color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.modal-head h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.02em}
+.modal-head .badge{background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;display:inline-block;margin-top:4px}
+.modal-close{background:rgba(255,255,255,0.2);color:#fff;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;line-height:1;flex-shrink:0}
+.modal-close:hover{background:rgba(255,255,255,0.35)}
+.modal-actions{display:flex;gap:8px;padding:14px 24px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.modal-actions a,.modal-actions button{flex:1;padding:9px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px}
+.act-wpp{background:#25D366;color:#fff}
+.act-wpp:hover{background:#1FB957}
+.act-mail{background:var(--surface);color:var(--text);border:1px solid var(--border)!important}
+.act-mail:hover{border-color:var(--accent-mid)!important;color:var(--accent)}
+.act-del{background:var(--danger-bg);color:var(--danger)}
+.act-del:hover{background:#FFD0D0}
+.modal-body{padding:18px 24px}
+.detail-row{padding:10px 0;border-bottom:1px solid var(--border)}
+.detail-row:last-child{border-bottom:none}
+.detail-row .key{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;font-weight:600}
+.detail-row .val{font-size:13px;color:var(--text);word-break:break-word}
+.detail-row .val.empty{color:var(--muted);font-style:italic}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div class="login-overlay" id="login-overlay">
   <div class="login-card">
     <h2>Dr Marcos Andrade</h2>
@@ -131,6 +145,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <button class="login-btn" onclick="doLogin()">Entrar</button>
     <p style="text-align:center;margin-top:18px;font-size:10px;color:var(--muted);opacity:0.7">desenvolvido por <strong>Agência Rico</strong></p>
   </div>
+</div>
+
+<!-- MODAL de detalhes -->
+<div class="modal-back" id="modal-back" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal"></div>
 </div>
 
 <div class="app" id="app" style="display:none">
@@ -149,7 +168,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   </div>
 
   <div class="main">
-
     <!-- KANBAN -->
     <div class="panel active" id="view-kanban">
       <div class="kanban-top">
@@ -182,22 +200,22 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <div class="editor-section">
           <h3>Colunas do Kanban</h3>
           <div class="col-rows" id="col-editor">
-            <div class="col-row"><input type="text" value="Novo lead" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div></div>
-            <div class="col-row"><input type="text" value="Em contato" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div></div>
-            <div class="col-row"><input type="text" value="Avaliação agendada" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div></div>
-            <div class="col-row"><input type="text" value="Cliente fechado" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div></div>
-            <div class="col-row"><input type="text" value="Não converteu" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div></div>
+            <div class="col-row"><input type="text" value="Novo lead"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div></div>
+            <div class="col-row"><input type="text" value="Em contato"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div></div>
+            <div class="col-row"><input type="text" value="Avaliação agendada"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div></div>
+            <div class="col-row"><input type="text" value="Cliente fechado"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div></div>
+            <div class="col-row"><input type="text" value="Não converteu"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div></div>
           </div>
           <button class="btn-add" onclick="addColRow()">+ nova coluna</button>
-          <p style="margin-top:14px;font-size:11px;color:var(--muted)">Renomear uma coluna aqui não muda o status dos leads que já estão nela. Mude pelos cards.</p>
+          <p style="margin-top:14px;font-size:11px;color:var(--muted)">Renomeação só vale localmente. Pra mudar status de leads existentes, arraste os cards.</p>
         </div>
 
         <div class="editor-section" style="grid-column:1/-1">
-          <h3>Link do formulário público</h3>
-          <div class="url-info">
-            <strong>Cole no anúncio o link do <code>formulario.html</code></strong> que você publicou.<br>
-            O cliente preenche → o lead aparece aqui na coluna <strong>"Novo lead"</strong> automaticamente. Use o botão <strong>↻ Recarregar</strong> pra atualizar.
-          </div>
+          <h3>Campos do formulário <span class="save-status" id="save-status">✓ Salvo</span></h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:14px">As alterações aqui afetam o formulário público em tempo real. Adicione, edite ou remova perguntas.</p>
+          <div id="fields-editor"></div>
+          <button class="btn-add" onclick="addField()">+ nova pergunta</button>
+          <button class="btn-save" id="btn-save-fields" onclick="saveFields()">Salvar mudanças</button>
         </div>
       </div>
     </div>
@@ -206,222 +224,337 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-// 🔧 CONFIGURAÇÃO
-// ═══════════════════════════════════════════════════════════════
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4yZCnhCQn07PpdplbYhom_Z4TmEYnlbSh_VMDmombo39QuDyoWraUVPMsy-h5up3Dbw/exec';
 const SECRET_KEY = 'marcos-clinica-2026';
-// ═══════════════════════════════════════════════════════════════
 
 // ─── LOGIN ───
-function doLogin() {
-  const v = document.getElementById('login-input').value;
-  if (v === SECRET_KEY) {
-    sessionStorage.setItem('lf_auth', '1');
+function doLogin(){
+  if(document.getElementById('login-input').value === SECRET_KEY){
+    sessionStorage.setItem('lf_auth','1');
     showApp();
-  } else {
-    document.getElementById('login-err').textContent = 'Senha incorreta.';
-  }
+  } else document.getElementById('login-err').textContent='Senha incorreta.';
 }
-function doLogout() {
-  sessionStorage.removeItem('lf_auth');
-  location.reload();
-}
-function showApp() {
-  document.getElementById('login-overlay').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
+function doLogout(){ sessionStorage.removeItem('lf_auth'); location.reload(); }
+function showApp(){
+  document.getElementById('login-overlay').style.display='none';
+  document.getElementById('app').style.display='flex';
   loadFromSheet();
 }
-if (sessionStorage.getItem('lf_auth') === '1') showApp();
+if(sessionStorage.getItem('lf_auth')==='1') showApp();
 
 // ─── STATE ───
 const state = {
-  cols: ['Novo lead','Em contato','Avaliação agendada','Cliente fechado','Não converteu'],
-  cards: { 'Novo lead':[], 'Em contato':[], 'Avaliação agendada':[], 'Cliente fechado':[], 'Não converteu':[] },
-  drag: null
+  cols:['Novo lead','Em contato','Avaliação agendada','Cliente fechado','Não converteu'],
+  cards:{},
+  config:[],
+  drag:null,
+  leadsRaw:[]
 };
+state.cols.forEach(c => state.cards[c]=[]);
 
 // ─── TABS ───
-function switchTab(t) {
-  document.querySelectorAll('.nav-tab').forEach((b,i) => b.classList.toggle('active', ['kanban','editor'][i]===t));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+function switchTab(t){
+  document.querySelectorAll('.nav-tab').forEach((b,i)=>b.classList.toggle('active',['kanban','editor'][i]===t));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('view-'+t).classList.add('active');
-  if (t === 'kanban') renderBoard();
+  if(t==='kanban') renderBoard();
+  if(t==='editor') renderFieldsEditor();
 }
 
 // ─── ACCENT ───
-function setAccent(c, bg, mid, el) {
-  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+function setAccent(c,bg,mid,el){
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
   el.classList.add('active');
-  const root = document.querySelector(':root');
-  root.style.setProperty('--accent', c);
-  root.style.setProperty('--accent-bg', bg);
-  root.style.setProperty('--accent-mid', mid);
+  const r=document.querySelector(':root');
+  r.style.setProperty('--accent',c); r.style.setProperty('--accent-bg',bg); r.style.setProperty('--accent-mid',mid);
 }
 
 // ─── COL EDITOR ───
-function addColRow() {
-  const d = document.createElement('div');
-  d.className = 'col-row';
-  d.innerHTML = `<input type="text" placeholder="Nova coluna" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div>`;
+function addColRow(){
+  const d=document.createElement('div');
+  d.className='col-row';
+  d.innerHTML=`<input type="text" placeholder="Nova coluna"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div>`;
   document.getElementById('col-editor').appendChild(d);
   syncCols();
 }
-function removeColRow(el) { el.parentElement.remove(); syncCols(); }
-function syncCols() {
-  const inputs = document.querySelectorAll('#col-editor input');
-  const newCols = Array.from(inputs).map(i => i.value.trim()).filter(Boolean);
-  const newCards = {};
-  newCols.forEach(c => { newCards[c] = state.cards[c] || []; });
-  state.cols = newCols;
-  state.cards = newCards;
+function syncCols(){
+  const inputs=document.querySelectorAll('#col-editor input');
+  const newCols=Array.from(inputs).map(i=>i.value.trim()).filter(Boolean);
+  const newCards={};
+  newCols.forEach(c=>{newCards[c]=state.cards[c]||[]});
+  state.cols=newCols; state.cards=newCards;
+}
+document.getElementById('col-editor').addEventListener('input',syncCols);
+
+// ─── FIELDS EDITOR ───
+function renderFieldsEditor(){
+  const wrap=document.getElementById('fields-editor');
+  wrap.innerHTML='';
+  state.config.forEach((f,i) => {
+    const div=document.createElement('div');
+    div.className='field-row';
+    div.dataset.index=i;
+    div.innerHTML=`
+      <div class="row-1">
+        <input class="field-key" type="text" placeholder="chave (ex: idade)" value="${f.chave||''}" data-attr="chave">
+        <input type="text" placeholder="Pergunta exibida" value="${f.label||''}" data-attr="label">
+        <select class="field-tipo" data-attr="tipo">
+          <option value="text" ${f.tipo==='text'?'selected':''}>Texto</option>
+          <option value="email" ${f.tipo==='email'?'selected':''}>Email</option>
+          <option value="tel" ${f.tipo==='tel'?'selected':''}>Telefone</option>
+          <option value="number" ${f.tipo==='number'?'selected':''}>Número</option>
+          <option value="date" ${f.tipo==='date'?'selected':''}>Data</option>
+          <option value="select" ${f.tipo==='select'?'selected':''}>Lista (dropdown)</option>
+          <option value="textarea" ${f.tipo==='textarea'?'selected':''}>Texto longo</option>
+        </select>
+        <button class="col-del" onclick="removeField(${i})" title="Remover">✕</button>
+      </div>
+      ${f.tipo==='select' ? `<textarea placeholder="Opções separadas por |  (ex: Botox|Limpeza|Peeling)" data-attr="opcoes">${(f.opcoes||[]).join('|')}</textarea>` : ''}
+      <div class="field-meta">
+        <label><input type="checkbox" ${f.obrigatorio?'checked':''} data-attr="obrigatorio"> Obrigatório</label>
+        <label><input type="checkbox" ${f.visivel!==false?'checked':''} data-attr="visivel"> Visível no formulário</label>
+        <span style="margin-left:auto">chave: <code>${f.chave||'?'}</code></span>
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
 }
 
-// ─── INTEGRAÇÃO COM A PLANILHA ───
-async function loadFromSheet(force) {
-  const btn = document.getElementById('btn-reload');
-  if (btn) { btn.disabled = true; btn.textContent = '⌛ Carregando...'; }
-  try {
-    const url = SCRIPT_URL + '?key=' + encodeURIComponent(SECRET_KEY) + '&t=' + Date.now();
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error || 'erro');
+function addField(){
+  state.config.push({chave:'',label:'',tipo:'text',opcoes:[],obrigatorio:false,visivel:true});
+  renderFieldsEditor();
+}
 
-    syncCols();
-    state.cols.forEach(c => state.cards[c] = []);
+function removeField(i){
+  if(!confirm('Remover essa pergunta? Os leads existentes ficam sem esse dado.')) return;
+  state.config.splice(i,1);
+  renderFieldsEditor();
+}
 
-    json.leads.forEach(lead => {
-      const status = lead.status || state.cols[0];
-      if (!state.cards[status]) state.cards[status] = [];
+function readFieldsFromUI(){
+  const fields=[];
+  document.querySelectorAll('#fields-editor .field-row').forEach(row => {
+    const f={chave:'',label:'',tipo:'text',opcoes:[],obrigatorio:false,visivel:true};
+    row.querySelectorAll('[data-attr]').forEach(el => {
+      const k=el.dataset.attr;
+      if(el.type==='checkbox') f[k]=el.checked;
+      else if(k==='opcoes') f[k]=el.value.split('|').map(s=>s.trim()).filter(Boolean);
+      else f[k]=el.value.trim();
+    });
+    if(f.chave) fields.push(f);
+  });
+  return fields;
+}
+
+async function saveFields(){
+  const fields=readFieldsFromUI();
+  // valida chaves
+  const keys=fields.map(f=>f.chave);
+  if(new Set(keys).size!==keys.length){alert('Tem chaves repetidas. Cada chave deve ser única.');return}
+  for(const f of fields){
+    if(!/^[a-z][a-z0-9_]*$/.test(f.chave)){
+      alert(`Chave inválida: "${f.chave}". Use só letras minúsculas, números e _ (sem espaço, acento ou maiúscula). Ex: data_nascimento`);
+      return;
+    }
+  }
+  const btn=document.getElementById('btn-save-fields');
+  btn.disabled=true; btn.textContent='Salvando...';
+  try{
+    const res=await fetch(SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'setConfig',key:SECRET_KEY,fields})
+    });
+    const json=await res.json();
+    if(!json.ok) throw new Error(json.error||'erro');
+    state.config=json.config||fields;
+    const s=document.getElementById('save-status');
+    s.classList.add('show'); setTimeout(()=>s.classList.remove('show'),2200);
+    renderFieldsEditor();
+  }catch(err){alert('Erro ao salvar: '+err.message)}
+  finally{btn.disabled=false;btn.textContent='Salvar mudanças'}
+}
+
+// ─── PLANILHA ───
+async function loadFromSheet(force){
+  const btn=document.getElementById('btn-reload');
+  if(btn){btn.disabled=true;btn.textContent='⌛ Carregando...'}
+  try{
+    const url=SCRIPT_URL+'?key='+encodeURIComponent(SECRET_KEY)+'&t='+Date.now();
+    const res=await fetch(url);
+    const json=await res.json();
+    if(!json.ok) throw new Error(json.error||'erro');
+
+    state.config=json.config||[];
+    state.leadsRaw=json.leads||[];
+
+    state.cols.forEach(c=>state.cards[c]=[]);
+    state.leadsRaw.forEach(lead => {
+      const status=lead.status || state.cols[0];
+      if(!state.cards[status]) state.cards[status]=[];
       state.cards[status].push({
-        id: lead.id || ('c_' + Math.random()),
-        name: lead.nome || '(sem nome)',
-        detail: [lead.servico || '', lead.whatsapp || lead.email || ''].filter(Boolean).join(' · '),
-        whatsapp: lead.whatsapp || '',
-        tag: lead.tag || 'new',
-        time: formatTime(lead.criado_em)
+        id:lead.id || ('c_'+Math.random()),
+        name:lead.nome || '(sem nome)',
+        detail:[lead.servico||'', lead.whatsapp||lead.email||''].filter(Boolean).join(' · '),
+        whatsapp:lead.whatsapp||'',
+        email:lead.email||'',
+        tag:lead.tag||'new',
+        time:formatTime(lead.criado_em),
+        raw:lead
       });
     });
-  } catch (err) {
-    console.error(err);
-    if (force) alert('Erro ao carregar leads: ' + err.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '↻ Recarregar'; }
-    renderBoard();
-  }
+  }catch(err){console.error(err); if(force) alert('Erro: '+err.message)}
+  finally{if(btn){btn.disabled=false;btn.textContent='↻ Recarregar'}; renderBoard()}
 }
 
-function formatTime(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (isNaN(d)) return '';
-  const diff = (Date.now() - d.getTime()) / 1000;
-  if (diff < 60) return 'agora';
-  if (diff < 3600) return `há ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `há ${Math.floor(diff / 3600)}h`;
-  if (diff < 172800) return 'ontem';
+function formatTime(iso){
+  if(!iso) return '';
+  const d=new Date(iso); if(isNaN(d)) return '';
+  const diff=(Date.now()-d.getTime())/1000;
+  if(diff<60) return 'agora';
+  if(diff<3600) return `há ${Math.floor(diff/60)} min`;
+  if(diff<86400) return `há ${Math.floor(diff/3600)}h`;
+  if(diff<172800) return 'ontem';
   return d.toLocaleDateString('pt-BR');
 }
 
-async function updateStatusOnSheet(id, status) {
-  try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'update_status', key: SECRET_KEY, id, status })
-    });
-  } catch (err) {
-    console.error('Falha ao atualizar status:', err);
-    alert('Não consegui salvar a mudança na planilha.');
-  }
+async function updateStatusOnSheet(id,status){
+  try{await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'update_status',key:SECRET_KEY,id,status})})}
+  catch(err){console.error(err);alert('Não consegui salvar')}
+}
+
+async function deleteLead(id){
+  if(!confirm('Excluir esse lead permanentemente?')) return;
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'delete',key:SECRET_KEY,id})});
+    closeModal();
+    loadFromSheet();
+  }catch(err){alert('Erro: '+err.message)}
 }
 
 // ─── KANBAN ───
-const tagMap = { new:['chip-new','novo'], hot:['chip-hot','quente'], warm:['chip-warm','morno'], cold:['chip-cold','frio'], won:['chip-won','fechado'] };
-const avatarColors = ['#EDEAFF','#D6F0E3','#FFE8E0','#E6F1FB','#F5E6FF','#FFF0CC'];
-const avatarText = ['#3D2FBF','#0F6E56','#C03A0A','#185FA5','#7B2D8B','#8B6000'];
+const tagMap={new:['chip-new','novo'],hot:['chip-hot','quente'],warm:['chip-warm','morno'],cold:['chip-cold','frio'],won:['chip-won','fechado']};
+const avatarColors=['#EDEAFF','#D6F0E3','#FFE8E0','#E6F1FB','#F5E6FF','#FFF0CC'];
+const avatarText=['#3D2FBF','#0F6E56','#C03A0A','#185FA5','#7B2D8B','#8B6000'];
 
-function initials(name) { return (name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2); }
+function initials(n){return (n||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
 
-function renderBoard() {
-  const board = document.getElementById('board');
-  board.innerHTML = '';
+function renderBoard(){
+  const board=document.getElementById('board');
+  board.innerHTML='';
   syncCols();
-
-  state.cols.forEach((colName, ci) => {
-    const cards = state.cards[colName] || [];
-    const col = document.createElement('div');
-    col.className = 'col';
-    col.innerHTML = `
+  state.cols.forEach((colName,ci) => {
+    const cards=state.cards[colName]||[];
+    const col=document.createElement('div');
+    col.className='col';
+    col.innerHTML=`
       <div class="col-head">
         <span class="col-name" style="color:var(--accent)">${colName}</span>
         <span class="col-badge">${cards.length}</span>
       </div>
       <div class="cards" id="cards-${ci}" ondragover="onOver(event,this)" ondrop="onDrop(event,'${colName.replace(/'/g,"\\'")}')" ondragleave="onLeave(event,this)"></div>`;
     board.appendChild(col);
-    const container = col.querySelector('.cards');
-    cards.forEach(card => container.appendChild(makeCard(card, ci)));
+    const cont=col.querySelector('.cards');
+    cards.forEach(card => cont.appendChild(makeCard(card,ci)));
   });
-
   updateStats();
 }
 
-function makeCard(card, ci) {
-  const [cls, label] = tagMap[card.tag] || ['chip-new','novo'];
-  const av = document.createElement('div');
-  const idx = (card.id || '').charCodeAt(0) % avatarColors.length || 0;
-  av.className = 'mini-av';
-  av.style.background = avatarColors[idx];
-  av.style.color = avatarText[idx];
-  av.textContent = initials(card.name);
+function makeCard(card,ci){
+  const [cls,label]=tagMap[card.tag]||['chip-new','novo'];
+  const av=document.createElement('div');
+  const idx=(card.id||'').charCodeAt(0)%avatarColors.length||0;
+  av.className='mini-av';
+  av.style.background=avatarColors[idx]; av.style.color=avatarText[idx];
+  av.textContent=initials(card.name);
 
-  const wppNumber = (card.whatsapp || '').replace(/\D/g, '');
-  const wppBtn = wppNumber ? `<a href="https://wa.me/${wppNumber.startsWith('55') ? wppNumber : '55' + wppNumber}" target="_blank" rel="noopener" class="wpp-btn" title="Abrir WhatsApp" onclick="event.stopPropagation()">💬</a>` : '';
+  const wppNumber=(card.whatsapp||'').replace(/\D/g,'');
+  const wppBtn=wppNumber?`<a href="https://wa.me/${wppNumber.startsWith('55')?wppNumber:'55'+wppNumber}" target="_blank" rel="noopener" class="wpp-btn" title="Abrir WhatsApp" onclick="event.stopPropagation()">💬</a>`:'';
 
-  const el = document.createElement('div');
-  el.className = 'card';
-  el.id = card.id;
-  el.draggable = true;
-  el.innerHTML = `
+  const el=document.createElement('div');
+  el.className='card';
+  el.id=card.id;
+  el.draggable=true;
+  el.innerHTML=`
     <div class="card-top">
       <span class="card-name-text">${card.name}</span>
-      <span class="card-time">${card.time || ''}</span>
+      <span class="card-time">${card.time||''}</span>
     </div>
-    <div class="card-detail">${card.detail || ''}</div>
+    <div class="card-detail">${card.detail||''}</div>
     <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
       <div class="card-chips"><span class="chip-sm ${cls}">${label}</span></div>
       ${wppBtn}
     </div>`;
   el.querySelector('.card-chips').parentElement.appendChild(av);
-  el.addEventListener('dragstart', () => { state.drag = { card, fromCol: state.cols[ci] }; el.style.opacity = '0.5'; });
-  el.addEventListener('dragend', () => el.style.opacity = '1');
+  el.addEventListener('click',()=>openModal(card));
+  el.addEventListener('dragstart',()=>{state.drag={card,fromCol:state.cols[ci]};el.style.opacity='0.5'});
+  el.addEventListener('dragend',()=>el.style.opacity='1');
   return el;
 }
 
-function onOver(e, el) { e.preventDefault(); el.classList.add('over'); }
-function onLeave(e, el) { el.classList.remove('over'); }
-function onDrop(e, toColName) {
-  e.preventDefault();
-  e.currentTarget.classList.remove('over');
-  if (!state.drag) return;
-  const { card, fromCol } = state.drag;
-  if (fromCol === toColName) return;
-  state.cards[fromCol] = (state.cards[fromCol] || []).filter(c => c.id !== card.id);
-  if (!state.cards[toColName]) state.cards[toColName] = [];
+function onOver(e,el){e.preventDefault();el.classList.add('over')}
+function onLeave(e,el){el.classList.remove('over')}
+function onDrop(e,toColName){
+  e.preventDefault(); e.currentTarget.classList.remove('over');
+  if(!state.drag) return;
+  const {card,fromCol}=state.drag;
+  if(fromCol===toColName) return;
+  state.cards[fromCol]=(state.cards[fromCol]||[]).filter(c=>c.id!==card.id);
+  if(!state.cards[toColName]) state.cards[toColName]=[];
   state.cards[toColName].push(card);
-  state.drag = null;
+  state.drag=null;
   renderBoard();
-  updateStatusOnSheet(card.id, toColName);
+  updateStatusOnSheet(card.id,toColName);
 }
 
-function updateStats() {
-  let total = 0;
-  state.cols.forEach(c => total += (state.cards[c] || []).length);
-  document.getElementById('stat-total').textContent = total;
-  const today = state.cols.reduce((sum, c) => sum + (state.cards[c] || []).filter(card => /agora|min|^há \d+h/.test(card.time || '')).length, 0);
-  document.getElementById('stat-hoje').textContent = today;
+function updateStats(){
+  let total=0;
+  state.cols.forEach(c=>total+=(state.cards[c]||[]).length);
+  document.getElementById('stat-total').textContent=total;
+  const today=state.cols.reduce((s,c)=>s+(state.cards[c]||[]).filter(card=>/agora|min|^há \d+h/.test(card.time||'')).length,0);
+  document.getElementById('stat-hoje').textContent=today;
 }
+
+// ─── MODAL ───
+function openModal(card){
+  const lead=card.raw;
+  const wpp=(card.whatsapp||'').replace(/\D/g,'');
+  const wppLink=wpp?`https://wa.me/${wpp.startsWith('55')?wpp:'55'+wpp}`:'';
+  const mailLink=card.email?`mailto:${card.email}`:'';
+
+  // Monta lista de detalhes ignorando colunas de sistema
+  const skip=new Set(['criado_em','id','tag','status','nome']);
+  let details='';
+  state.config.forEach(f => {
+    if(skip.has(f.chave)) return;
+    const v=lead[f.chave];
+    details+=`<div class="detail-row"><div class="key">${f.label}</div><div class="val ${!v?'empty':''}">${v||'(não respondido)'}</div></div>`;
+  });
+  // Sempre mostra criado_em e status
+  details+=`<div class="detail-row"><div class="key">Cadastrado em</div><div class="val">${lead.criado_em?new Date(lead.criado_em).toLocaleString('pt-BR'):'-'}</div></div>`;
+  details+=`<div class="detail-row"><div class="key">Status atual</div><div class="val">${lead.status||'-'}</div></div>`;
+
+  const modal=document.getElementById('modal');
+  modal.innerHTML=`
+    <div class="modal-head">
+      <div>
+        <h3>${card.name}</h3>
+        <div class="badge">${lead.status||'Novo lead'}</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-actions">
+      ${wppLink?`<a class="act-wpp" href="${wppLink}" target="_blank" rel="noopener">💬 WhatsApp</a>`:''}
+      ${mailLink?`<a class="act-mail" href="${mailLink}">✉️ Email</a>`:''}
+      <button class="act-del" onclick="deleteLead('${card.id}')">🗑️ Excluir</button>
+    </div>
+    <div class="modal-body">${details}</div>
+  `;
+  document.getElementById('modal-back').classList.add('show');
+}
+
+function closeModal(){document.getElementById('modal-back').classList.remove('show')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 </script>
 </body>
 </html>
