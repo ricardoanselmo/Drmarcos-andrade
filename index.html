@@ -327,10 +327,6 @@ body {
 
 .swatch.active { border-color: var(--text); transform: scale(1.12); }
 
-.svc-rows { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; margin-bottom: 4px; }
-.svc-row { display: flex; align-items: center; gap: 8px; }
-.svc-row input { flex: 1; padding: 7px 10px; border: 1.5px solid var(--border2); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); background: var(--surface); outline: none; }
-.svc-row input:focus { border-color: var(--accent); }
 .col-rows { display: flex; flex-direction: column; gap: 8px; }
 
 .col-row { display: flex; align-items: center; gap: 8px; }
@@ -640,7 +636,7 @@ body {
                 <div class="field" id="f-email"><label>Email</label><input type="email" data-key="email" placeholder="voce@email.com"></div>
               </div>
               <div class="field" id="f-servico"><label>Serviço de interesse</label>
-                <select data-key="servico" id="form-servico-select">
+                <select data-key="servico">
                   <option value="">Selecione um serviço...</option>
                   <option>Botox / Toxina botulínica</option>
                   <option>Preenchimento facial</option>
@@ -721,11 +717,6 @@ body {
           </div>
         </div>
         <div class="editor-section">
-          <h3>Serviços do formulário</h3>
-          <div class="svc-rows" id="svc-rows"></div>
-          <button class="btn-add" onclick="addSvcRow()">+ novo serviço</button>
-        </div>
-        <div class="editor-section">
           <h3>Colunas do Kanban</h3>
           <div class="col-rows" id="col-editor">
             <div class="col-row"><input type="text" value="Novo lead" oninput="syncCols()"><div class="col-del" onclick="removeColRow(this)" title="Remover">✕</div></div>
@@ -762,11 +753,11 @@ body {
 
 // 1) URL do seu Apps Script implantado como Web App
 //    (gerada quando você clica em "Implantar → Nova implantação")
-const SCRIPT_URL = 'COLE_AQUI_A_URL_DO_APPS_SCRIPT';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4yZCnhCQn07PpdplbYhom_Z4TmEYnlbSh_VMDmombo39QuDyoWraUVPMsy-h5up3Dbw/exec';
 
 // 2) Senha — tem que ser EXATAMENTE igual ao SECRET_KEY do Apps Script.
 //    Também é usada pra entrar no painel.
-const SECRET_KEY = 'drmarcos2026';
+const SECRET_KEY = 'marcos-clinica-2026';
 
 // ═══════════════════════════════════════════════════════════════
 
@@ -794,21 +785,7 @@ const state = {
   cols: ['Novo lead', 'Em contato', 'Avaliação agendada', 'Cliente fechado', 'Não converteu'],
   cards: { 'Novo lead': [], 'Em contato': [], 'Avaliação agendada': [], 'Cliente fechado': [], 'Não converteu': [] },
   drag: null,
-  loaded: false,
-  services: [
-    'Botox / Toxina botulínica',
-    'Preenchimento facial',
-    'Harmonização facial',
-    'Bioestimulador de colágeno',
-    'Limpeza de pele profunda',
-    'Peeling químico',
-    'Microagulhamento',
-    'Depilação a laser',
-    'Tratamento de manchas',
-    'Tratamento para acne',
-    'Avaliação dermatológica',
-    'Outro / Não tenho certeza'
-  ]
+  loaded: false
 };
 
 // ─── TABS ───
@@ -820,7 +797,6 @@ function switchTab(t) {
     if (!state.loaded) loadFromSheet();
     else renderBoard();
   }
-  if (t === 'editor') renderSvcRows();
 }
 
 // ─── ACCENT ───
@@ -860,30 +836,6 @@ function syncCols() {
   newCols.forEach(c => { newCards[c] = state.cards[c] || []; });
   state.cols = newCols;
   state.cards = newCards;
-}
-
-// ─── SERVIÇOS ───
-function renderSvcRows() {
-  const container = document.getElementById('svc-rows');
-  if (!container) return;
-  container.innerHTML = '';
-  state.services.forEach((svc, i) => {
-    const row = document.createElement('div');
-    row.className = 'svc-row';
-    row.innerHTML = `
-      <input type="text" value="${svc.replace(/"/g,'&quot;')}" oninput="updateSvc(${i},this.value)">
-      <div class="col-del" onclick="removeSvc(${i})" title="Remover">✕</div>`;
-    container.appendChild(row);
-  });
-}
-function updateSvc(i, val) { state.services[i] = val; renderServiceOptions(); }
-function addSvcRow() { state.services.push('Novo serviço'); renderSvcRows(); renderServiceOptions(); }
-function removeSvc(i) { state.services.splice(i, 1); renderSvcRows(); renderServiceOptions(); }
-function renderServiceOptions() {
-  const sel = document.getElementById('form-servico-select');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">Selecione um serviço...</option>';
-  state.services.forEach(s => { const o = document.createElement('option'); o.textContent = s; sel.appendChild(o); });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -938,10 +890,7 @@ async function submitForm() {
     // Marca para recarregar Kanban quando abrir
     state.loaded = false;
 
-    // Redireciona pro WhatsApp após 1.5s
-    setTimeout(() => {
-      window.location.href = 'https://wa.me/5562920008978?text=Ol%C3%A1!%20Quero%20agendar%20uma%20avalia%C3%A7%C3%A3o';
-    }, 1500);
+    // Reset depois de 3s pra permitir novo envio
     setTimeout(() => {
       document.getElementById('form-body').style.display = '';
       document.getElementById('success-state').style.display = 'none';
@@ -1123,7 +1072,6 @@ function updateStats() {
 }
 
 // ─── INIT ───
-renderServiceOptions();
 renderBoard();
 </script>
 </body>
