@@ -199,13 +199,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
         <div class="editor-section">
           <h3>Colunas do Kanban</h3>
-          <div class="col-rows" id="col-editor">
-            <div class="col-row"><input type="text" value="Novo lead"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div></div>
-            <div class="col-row"><input type="text" value="Em contato"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div></div>
-            <div class="col-row"><input type="text" value="Avaliação agendada"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div></div>
-            <div class="col-row"><input type="text" value="Cliente fechado"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div></div>
-            <div class="col-row"><input type="text" value="Não converteu"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div></div>
-          </div>
+          <div class="col-rows" id="col-editor"><!-- preenchido via JS --></div>
           <button class="btn-add" onclick="addColRow()">+ nova coluna</button>
           <p style="margin-top:14px;font-size:11px;color:var(--muted)">Renomeação só vale localmente. Pra mudar status de leads existentes, arraste os cards.</p>
         </div>
@@ -252,8 +246,21 @@ function showApp(){
 if(sessionStorage.getItem('lf_auth')==='1') showApp();
 
 // ─── STATE ───
+const DEFAULT_COLS = ['Novo lead','Em contato','Avaliação agendada','Cliente fechado','Não converteu'];
+
+function loadColsFromStorage(){
+  try{
+    const raw=localStorage.getItem('lf_cols');
+    if(raw){const arr=JSON.parse(raw); if(Array.isArray(arr) && arr.length>0) return arr}
+  }catch(e){}
+  return [...DEFAULT_COLS];
+}
+function saveColsToStorage(){
+  try{localStorage.setItem('lf_cols',JSON.stringify(state.cols))}catch(e){}
+}
+
 const state = {
-  cols:['Novo lead','Em contato','Avaliação agendada','Cliente fechado','Não converteu'],
+  cols: loadColsFromStorage(),
   cards:{},
   config: JSON.parse(JSON.stringify(DEFAULT_FIELDS)), // começa com padrão pra não ficar vazio
   drag:null,
@@ -282,18 +289,32 @@ function setAccent(c,bg,mid,el){
 function addColRow(){
   const d=document.createElement('div');
   d.className='col-row';
-  d.innerHTML=`<input type="text" placeholder="Nova coluna"><div class="col-del" onclick="this.parentElement.remove();syncCols()" title="Remover">✕</div>`;
+  d.innerHTML=`<input type="text" placeholder="Nova coluna"><div class="col-del" onclick="if(confirm('Remover essa coluna?')){this.parentElement.remove();syncCols()}" title="Remover">✕</div>`;
   document.getElementById('col-editor').appendChild(d);
-  syncCols();
+  // sem syncCols aqui — só sincroniza quando o usuário digitar
 }
 function syncCols(){
   const inputs=document.querySelectorAll('#col-editor input');
   const newCols=Array.from(inputs).map(i=>i.value.trim()).filter(Boolean);
+  if(newCols.length===0) return; // não permite estado vazio
   const newCards={};
   newCols.forEach(c=>{newCards[c]=state.cards[c]||[]});
   state.cols=newCols; state.cards=newCards;
+  saveColsToStorage();
 }
 document.getElementById('col-editor').addEventListener('input',syncCols);
+
+function renderColEditor(){
+  const wrap=document.getElementById('col-editor');
+  wrap.innerHTML='';
+  state.cols.forEach(c => {
+    const d=document.createElement('div');
+    d.className='col-row';
+    d.innerHTML=`<input type="text" value="${c.replace(/"/g,'&quot;')}"><div class="col-del" onclick="if(confirm('Remover essa coluna?')){this.parentElement.remove();syncCols()}" title="Remover">✕</div>`;
+    wrap.appendChild(d);
+  });
+}
+renderColEditor();
 
 // ─── FIELDS EDITOR ───
 function renderFieldsEditor(){
@@ -452,7 +473,8 @@ function initials(n){return (n||'?').split(' ').map(w=>w[0]).join('').toUpperCas
 function renderBoard(){
   const board=document.getElementById('board');
   board.innerHTML='';
-  syncCols();
+  // Não chama syncCols aqui — usa state.cols direto pra evitar bug de DOM dessincronizado
+  if(!state.cols || state.cols.length===0) state.cols=[...DEFAULT_COLS];
   state.cols.forEach((colName,ci) => {
     const cards=state.cards[colName]||[];
     const col=document.createElement('div');
