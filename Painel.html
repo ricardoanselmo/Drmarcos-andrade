@@ -227,6 +227,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4yZCnhCQn07PpdplbYhom_Z4TmEYnlbSh_VMDmombo39QuDyoWraUVPMsy-h5up3Dbw/exec';
 const SECRET_KEY = 'marcos-clinica-2026';
 
+// Campos padrão do formulário — usados como fallback quando ainda não tem Config na planilha.
+const DEFAULT_FIELDS = [
+  { chave:'nome',     label:'Nome completo',         tipo:'text',     opcoes:[],                                                                                                                                                                                                                                                                                                          obrigatorio:true,  visivel:true },
+  { chave:'whatsapp', label:'WhatsApp',              tipo:'tel',      opcoes:[],                                                                                                                                                                                                                                                                                                          obrigatorio:true,  visivel:true },
+  { chave:'email',    label:'Email',                 tipo:'email',    opcoes:[],                                                                                                                                                                                                                                                                                                          obrigatorio:false, visivel:true },
+  { chave:'servico',  label:'Serviço de interesse',  tipo:'select',   opcoes:['Botox / Toxina botulínica','Preenchimento facial','Harmonização facial','Bioestimulador de colágeno','Limpeza de pele profunda','Peeling químico','Microagulhamento','Depilação a laser','Tratamento de manchas','Tratamento para acne','Avaliação dermatológica','Outro / Não tenho certeza'],            obrigatorio:false, visivel:true },
+  { chave:'mensagem', label:'Mensagem (opcional)',   tipo:'textarea', opcoes:[],                                                                                                                                                                                                                                                                                                          obrigatorio:false, visivel:true }
+];
+
 // ─── LOGIN ───
 function doLogin(){
   if(document.getElementById('login-input').value === SECRET_KEY){
@@ -246,7 +255,7 @@ if(sessionStorage.getItem('lf_auth')==='1') showApp();
 const state = {
   cols:['Novo lead','Em contato','Avaliação agendada','Cliente fechado','Não converteu'],
   cards:{},
-  config:[],
+  config: JSON.parse(JSON.stringify(DEFAULT_FIELDS)), // começa com padrão pra não ficar vazio
   drag:null,
   leadsRaw:[]
 };
@@ -385,7 +394,8 @@ async function loadFromSheet(force){
     const json=await res.json();
     if(!json.ok) throw new Error(json.error||'erro');
 
-    state.config=json.config||[];
+    // Se a planilha ainda não tem Config (Apps Script antigo ou primeira vez), mantém os padrões
+    if (json.config && json.config.length > 0) state.config = json.config;
     state.leadsRaw=json.leads||[];
 
     state.cols.forEach(c=>state.cards[c]=[]);
