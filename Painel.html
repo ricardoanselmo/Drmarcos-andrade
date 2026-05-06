@@ -131,9 +131,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+/* Splash de carregamento — Agência Rico */
+.splash{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:99999;transition:opacity 0.4s ease,visibility 0.4s ease}
+.splash.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.splash-wrap{display:flex;flex-direction:column;align-items:center}
+.splash-logo{width:60px;height:auto;animation:splashPulse 1.2s ease-in-out infinite}
+.splash-logo path{fill:var(--accent)}
+.splash-label{margin-top:18px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.splash-label strong{color:var(--text);font-weight:600}
+.splash-bar{margin-top:14px;width:80px;height:2px;background:var(--border2);border-radius:99px;overflow:hidden;position:relative}
+.splash-bar::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:100%;background:var(--accent);border-radius:99px;animation:splashBar 1s ease-in-out infinite}
+@keyframes splashPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.08);opacity:0.75}}
+@keyframes splashBar{0%{left:-40%}100%{left:100%}}
 </style>
 </head>
 <body>
+
+<!-- SPLASH -->
+<div class="splash" id="splash">
+  <div class="splash-wrap">
+    <svg class="splash-logo" viewBox="0 0 325 485" xmlns="http://www.w3.org/2000/svg">
+      <path d="M324.459 253.924H161.714L323.238 415.448L256.903 481.782L93.8105 318.689V484.572H0V160.113H324.459V253.924ZM324.459 93.8105H0V0H324.459V93.8105Z"/>
+    </svg>
+    <div class="splash-label">por <strong>Agência Rico</strong></div>
+    <div class="splash-bar"></div>
+  </div>
+</div>
 
 <!-- LOGIN -->
 <div class="login-overlay" id="login-overlay">
@@ -218,6 +242,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 </div>
 
 <script>
+// Splash de carregamento — esconde após 1 segundo
+setTimeout(() => { document.getElementById('splash').classList.add('hidden'); }, 1000);
+
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4yZCnhCQn07PpdplbYhom_Z4TmEYnlbSh_VMDmombo39QuDyoWraUVPMsy-h5up3Dbw/exec';
 const SECRET_KEY = 'marcos-clinica-2026';
 
